@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>weight log</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>weight log</h1>
+      <p class="sub">log it daily</p>
+    </header>
+
+    <section class="card entry">
+      <form id="entryForm" class="entryForm">
+        <label class="field">
+          <span>weight</span>
+          <div class="row">
+            <input id="weightInput" type="number" step="0.1" inputmode="decimal" placeholder="74.2" required />
+            <span class="suffix">kg</span>
+          </div>
+        </label>
+        <label class="field">
+          <span>date</span>
+          <div class="row">
+            <input id="dateInput" type="date" required />
+          </div>
+        </label>
+        <button type="submit" class="primary">save</button>
+      </form>
+    </section>
+
+    <section class="card stats">
+      <div class="stat">
+        <span class="label">latest</span>
+        <span id="statLatest" class="value">--</span>
+      </div>
+      <div class="stat">
+        <span class="label">entries</span>
+        <span id="statCount" class="value">0</span>
+      </div>
+    </section>
+
+    <section class="card list">
+      <h2>entries</h2>
+      <ul id="entryList"></ul>
+      <p id="emptyMsg" class="empty">nothing logged yet.</p>
+    </section>
+
+    <p class="footnote">
+      stored in your browser only.
+    </p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
