@@ -10,6 +10,7 @@ const listEl = $("entryList");
 const emptyMsg = $("emptyMsg");
 
 let entries = load();
+let chart = null;
 
 function load() {
   try {
@@ -38,19 +39,44 @@ function upsert(date, kg) {
   entries.sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// 7-day moving average. window is the 7 days ending at index i (inclusive),
+// only counting days actually logged so gaps don't pad the window.
+function movingAvg(arr, windowDays = 7) {
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const cutoff = new Date(arr[i].date);
+    cutoff.setDate(cutoff.getDate() - (windowDays - 1));
+    const cutoffISO = cutoff.toISOString().slice(0, 10);
+    let sum = 0, n = 0;
+    for (let j = i; j >= 0; j--) {
+      if (arr[j].date < cutoffISO) break;
+      sum += arr[j].kg;
+      n++;
+    }
+    out.push(n ? sum / n : null);
+  }
+  return out;
+}
+
+function fmtKg(v) {
+  return (v == null || isNaN(v)) ? "--" : v.toFixed(1) + " kg";
+}
+
 function fmtDate(iso) {
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
-function render() {
-  // stats
+function renderStats() {
   $("statLatest").textContent = entries.length
-    ? entries[entries.length - 1].kg.toFixed(1) + " kg"
+    ? fmtKg(entries[entries.length - 1].kg)
     : "--";
+  const avgs = movingAvg(entries, 7);
+  $("statAvg").textContent = avgs.length ? fmtKg(avgs[avgs.length - 1]) : "--";
   $("statCount").textContent = entries.length;
+}
 
-  // list
+function renderList() {
   listEl.innerHTML = "";
   if (!entries.length) {
     emptyMsg.classList.remove("hidden");
@@ -72,6 +98,81 @@ function render() {
     `;
     listEl.appendChild(li);
   }
+}
+
+function renderChart() {
+  const ctx = $("chart").getContext("2d");
+  const labels = entries.map((e) => e.date);
+  const raw = entries.map((e) => e.kg);
+  const avg = movingAvg(entries, 7);
+
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "weight",
+          data: raw,
+          borderColor: "#bbb",
+          backgroundColor: "#1c1c1c",
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          borderWidth: 1,
+          showLine: false,
+        },
+        {
+          label: "7-day avg",
+          data: avg,
+          borderColor: "#1c1c1c",
+          backgroundColor: "transparent",
+          pointRadius: 0,
+          borderWidth: 2,
+          tension: 0.25,
+          spanGaps: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: "index" },
+      plugins: {
+        legend: { display: true, labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            title: (items) => fmtDate(items[0].label),
+            label: (ctx) => {
+              const v = ctx.parsed.y;
+              return `${ctx.dataset.label}: ${v == null ? "--" : v.toFixed(1) + " kg"}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            callback: function (val) { return fmtDate(this.getLabelForValue(val)); },
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 8,
+          },
+          grid: { display: false },
+        },
+        y: {
+          ticks: { callback: (v) => v + " kg" },
+          grid: { color: "#eee" },
+        },
+      },
+    },
+  });
+}
+
+function render() {
+  renderStats();
+  renderList();
+  renderChart();
 }
 
 form.addEventListener("submit", (e) => {

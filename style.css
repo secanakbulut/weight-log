@@ -11,7 +11,7 @@ html, body {
 }
 
 .wrap {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 32px 20px 80px;
 }
@@ -116,6 +116,8 @@ header h1 {
   font-weight: 600;
   letter-spacing: -0.01em;
 }
+
+.chartCard { padding: 14px 14px 8px; }
 
 .list h2 {
   margin: 0 0 10px;
