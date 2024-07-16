@@ -42,13 +42,25 @@
         <span id="statAvg" class="value">--</span>
       </div>
       <div class="stat">
-        <span class="label">entries</span>
-        <span id="statCount" class="value">0</span>
+        <span class="label">trend (last 30d)</span>
+        <span id="statTrend" class="value">--</span>
       </div>
     </section>
 
     <section class="card chartCard">
       <canvas id="chart" height="220"></canvas>
+    </section>
+
+    <section class="card target">
+      <label class="field">
+        <span>target weight</span>
+        <div class="row">
+          <input id="targetInput" type="number" step="0.1" inputmode="decimal" placeholder="70" />
+          <span class="suffix">kg</span>
+          <button id="clearTargetBtn" type="button" class="link">clear</button>
+        </div>
+      </label>
+      <p id="targetHint" class="hint"></p>
     </section>
 
     <section class="card list">
@@ -58,7 +70,7 @@
     </section>
 
     <p class="footnote">
-      stored in your browser only.
+      stored in your browser only. clearing site data wipes the history.
     </p>
   </main>
 

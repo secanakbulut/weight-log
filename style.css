@@ -96,6 +96,17 @@ header h1 {
 
 .primary:hover { background: #333; }
 
+.link {
+  border: none;
+  background: transparent;
+  color: #777;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.link:hover { color: #1c1c1c; }
+
 .stats {
   display: flex;
   gap: 18px;
@@ -117,7 +128,17 @@ header h1 {
   letter-spacing: -0.01em;
 }
 
+.stat .value.up   { color: #c75555; }
+.stat .value.down { color: #4a9a55; }
+.stat .value.flat { color: #888; }
+
 .chartCard { padding: 14px 14px 8px; }
+
+.target .hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #777;
+}
 
 .list h2 {
   margin: 0 0 10px;
