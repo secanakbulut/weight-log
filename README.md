@@ -1,5 +1,7 @@
 # weight log
 
+![](docs/screenshot.png)
+
 a tiny daily weight tracker. type a number, hit save, watch the line.
 
 i kept restarting the same notes app every few months for this. figured i'd just
